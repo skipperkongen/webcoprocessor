@@ -13,3 +13,9 @@ response: {
 	"response-url": "http://server/answer?value={x}"
 	}
 ```
+
+Additional thought
+
+* What kinds of queries clients can solve using Javascript? 
+* What are the essential tasks that aid scalability in a given domain?
+* Should there be a reward system, where clients get points for performing service *B* which go towards discounts for service A?
