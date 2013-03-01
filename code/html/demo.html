@@ -1,5 +1,28 @@
 {% extends "base.html" %}
 
+{% block stylesheetsandscripts %}
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+$(function() {
+	console.log("ready!");
+	var ws = new WebSocket("ws://localhost:8888/web_coproc");
+	ws.onopen = function() {
+	   ws.send('{"message_type":"register", "data":null, "sender":"node-42", "pool":null}');
+	};
+	ws.onmessage = function (evt) {
+	   $("#messages").append("<div>" + evt.data + "</div>");
+	};
+	$("button#send_query").click(function() {
+		message = $("input#query").val();
+		console.log("Sending message: " + message);
+		ws.send(message)
+	})
+	$("input#query").focus();
+})
+
+</script>
+{% end %}
+
 {% block title %}
 	<title>Demo</title>
 {% end %}
@@ -11,11 +34,11 @@
 {% block content %}
 	<p>
 		Enter query:<br/>
-		<form>
-			<textarea cols="100" rows="20"></textarea><br/>
-			<button>Execute</button>
-		</form>
+		<input value='{"message_type":"query", "data":"hello world","sender":"node-42", "pool":null}' id="query" size="100" style="padding:1em; font-family: fixed; font-size: 14pt;"></input><br/>
+		<button id="send_query">Execute</button>
 	</p>
+	<div id="messages">
+	</div>
 {% end %}
 
 {% block more %}
