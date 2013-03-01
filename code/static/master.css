@@ -1,0 +1,18 @@
+body {
+	font-family: arial, sans-serif;
+	
+}
+
+a {
+	color: #ffeedd;
+}
+
+#header {
+	text-transform:uppercase;
+}
+
+#content {
+	padding: 1em;
+	background-color: #334455;
+	color: #ffeedd;
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<head>
+	{% block title %}{% end %}
+	<link rel="stylesheet" type="text/css" href="/static/master.css">
+	{% block stylesheetsandscripts %}{% end %}
+</head>
+<body>
+
+<div id="container">
+
+<div id="header">
+  {% block header %}{% end %}
+</div>
+
+<div id="links">
+  {% block links %}{% end %}
+</div>
+
+<div id="content">
+  {% block content %}{% end %}
+</div>
+
+<div id="more">
+  {% block more %}{% end %}
+</div>
+
+<div id="footer">
+  {% block footer %}{% end %}
+  <p>© 2013 Greenwords</p>
+</div>
+
+</div>
+
+
+
+</body>
+</html>
