@@ -1,13 +1,17 @@
-import tornado.ioloop
-import tornado.web
-import tornado.websocket
 import pdb
 from json import loads as json_loads
 from json import dumps as json_dumps
-from util import Object
 from Queue import Queue
-
+from datetime import datetime
 from threading import Lock
+
+import tornado.ioloop
+import tornado.web
+import tornado.websocket
+
+from engine import WebCoProcessor, QueryEngine
+from util import Object
+
 
 lock_register = Lock()
 
@@ -23,27 +27,30 @@ class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
 	communication channel to a server, which in turn makes implementing 
 	real-time web sites about 1000% easier than it is today.
 	"""
+	def allow_draft76(self):
+		return True
+	
 	def initialize(self, webcoprocessor):
 		self.webcoprocessor = webcoprocessor
-		self.core_capabilities = None
+		self.connect_time = datetime.now()
 	
 	def write_message_json(self, obj):
 		self.write_message( json_dumps(obj.__dict__) )
 	
 	def open(self):
 		# pdb.set_trace() # let's see what info we have
-		print "webcore joining"
 		self.webcoprocessor.add_core( self )
-		
+		print "webcore joining. num_cores:", self.webcoprocessor.num_cores()
+				
 	def on_message(self, message):
 		"""Received a message from a web core"""
 		msg_from_core = WCPMessage.parse_message(message)
 		
 		print msg_from_core.message_type, msg_from_core.data
 
-		if msg_from_core.message_type == 'init':
-			# web core wanna to tell us something about its flops
-			self.core_capabilities = msg_from_core.data['core_capabilities']
+		#if msg_from_core.message_type == 'init':
+			# web core saying hi!
+		#	pass
 
 		if msg_from_core.message_type == 'result':
 			# web core has computed a JSON result
@@ -53,8 +60,8 @@ class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
 		# - self.write_message( json_dumps(obj.__dict__)  )
 
 	def on_close(self):
-		print "webcore leaving"
-		self.webcoprocessor.remove_core(self)
+		self.webcoprocessor.remove_core( self )
+		print "webcore leaving. num_cores:", self.webcoprocessor.num_cores(), "; avg_core_life (sec):", self.webcoprocessor.avg_core_life 
 
 class QueryEngineHandler(tornado.websocket.WebSocketHandler):
 	
@@ -62,13 +69,13 @@ class QueryEngineHandler(tornado.websocket.WebSocketHandler):
 		self.queryengine = queryengine
 		
 	def open(self):
-		#self.write_message("not implemented")
-		self.queryengine.add_connection( self )
-	
+		pass
+		
 	def on_message(self, message):
-		#self.write_message("not implemented")	
+		pass	
 
 	def on_close(self):
+		pass
 
 class WCPMessage(Object):
 	"""Based on anonymous object"""
@@ -77,29 +84,6 @@ class WCPMessage(Object):
 	def parse_message( message ):
 		return WCPMessage( **json_loads(message) )
 
-class WebCoProcessor(object):
-	"""NEEDS WORK!!"""
-	def __init__(self, input_buffer, output_buffer):
-		super(WebCoProcessor, self).__init__()
-		self.cores = set()
-		self.input_buffer = input_buffer
-		self.output_buffer = output_buffer
-	
-	def add_core(self, core):
-		self.cores.add( core )	
-
-	def remove_core(self, core):
-		self.cores.remove( core )
-	
-	def start(self):
-		"""in thread: while 1: get job from input_buffer, partition and send to cores"""
-		pass
-		
-class QueryEngine(object):
-	"""NEEDS WORK!!"""
-	def __init__(self, webcoprocessor):
-		super(QueryEngine, self).__init__()
-		self.webcoprocessor = webcoprocessor
 
 if __name__ == "__main__":
 	

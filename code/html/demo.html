@@ -7,12 +7,14 @@
 $(function() {
 	
  	console.log("attaching to web co-processor!");
+	// considered performance benchmarks:
+	// http://stackoverflow.com/questions/7128057/measuring-and-benchmarking-processing-power-of-a-javascript-engine-in-a-browser
 	
 	var ws = new WebSocket("ws://localhost:8888/webcoprocessor/attach");
 
 	ws.onopen = function() {
 		// send performance numbers to server, so it knows what you are
-		ws.send('{"message_type":"init", "data": {"core_capabilities":"'+$.jQuery.support+'"}}')
+		//ws.send('{"message_type":"init", "data": "web core saying hello"}')
 	};
 
 	ws.onmessage = function (evt) {
