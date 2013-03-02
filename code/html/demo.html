@@ -2,22 +2,36 @@
 
 {% block stylesheetsandscripts %}
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="/static/webcoproc.js"></script>
 <script type="text/javascript">
+
 $(function() {
-	console.log("ready!");
-	var ws = new WebSocket("ws://localhost:8888/web_coproc");
+	
+ 	console.log("attaching to web co-processor!");
+	
+	var ws = new WebSocket("ws://localhost:8888/webcoprocessor/attach");
+
 	ws.onopen = function() {
-	   ws.send('{"message_type":"register", "data":null, "sender":"node-42", "pool":null}');
+		// send performance numbers to server, so it knows what you are
+		ws.send('{"message_type":"init", "data": {"engine":"'+$.browser.version+'"}}')
 	};
+
 	ws.onmessage = function (evt) {
-	   $("#messages").append("<div>" + evt.data + "</div>");
+		
+		if( msg = $.parseJSON(evt.data) ) {
+			if msg.message_type == 'query' {
+				// in theory do something useful, for now just send some stuff, like the number 42
+				response = '{"message_type":"result", "data": {"fragment": "xyz123", "dummy_result": "dummy result"}}';
+				ws.send( response );
+			}
+		}
+		else {
+			console.log("error")
+		}
+		
+		$("div#incoming").append('<div style="margin-bottom: 5px; background-color: black; color: white">' + evt.data + '</div>');
 	};
-	$("button#send_query").click(function() {
-		message = $("input#query").val();
-		console.log("Sending message: " + message);
-		ws.send(message)
-	})
-	$("input#query").focus();
+
 })
 
 </script>
@@ -32,13 +46,8 @@ $(function() {
 {% end %}
 
 {% block content %}
-	<p>
-		Enter query:<br/>
-		<input value='{"message_type":"query", "data":"hello world","sender":"node-42", "pool":null}' id="query" size="100" style="padding:1em; font-family: fixed; font-size: 14pt;"></input><br/>
-		<button id="send_query">Execute</button>
-	</p>
-	<div id="messages">
-	</div>
+	<p>Incoming messages:</p>
+	<div id="incoming" />
 {% end %}
 
 {% block more %}
