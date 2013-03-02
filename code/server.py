@@ -78,7 +78,7 @@ class WCPMessage(Object):
 		return WCPMessage( **json_loads(message) )
 
 class WebCoProcessor(object):
-	"""docstring for WebCoProcessor"""
+	"""NEEDS WORK!!"""
 	def __init__(self, input_buffer, output_buffer):
 		super(WebCoProcessor, self).__init__()
 		self.cores = set()
@@ -96,7 +96,7 @@ class WebCoProcessor(object):
 		pass
 		
 class QueryEngine(object):
-	"""docstring for WCPQueryEngine"""
+	"""NEEDS WORK!!"""
 	def __init__(self, webcoprocessor):
 		super(QueryEngine, self).__init__()
 		self.webcoprocessor = webcoprocessor
