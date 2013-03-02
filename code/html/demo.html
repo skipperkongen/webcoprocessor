@@ -2,7 +2,6 @@
 
 {% block stylesheetsandscripts %}
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="/static/webcoproc.js"></script>
 <script type="text/javascript">
 
 $(function() {
@@ -13,17 +12,16 @@ $(function() {
 
 	ws.onopen = function() {
 		// send performance numbers to server, so it knows what you are
-		ws.send('{"message_type":"init", "data": {"engine":"'+$.browser.version+'"}}')
+		ws.send('{"message_type":"init", "data": {"core_capabilities":"'+$.jQuery.support+'"}}')
 	};
 
 	ws.onmessage = function (evt) {
-		
-		if( msg = $.parseJSON(evt.data) ) {
-			if msg.message_type == 'query' {
-				// in theory do something useful, for now just send some stuff, like the number 42
-				response = '{"message_type":"result", "data": {"fragment": "xyz123", "dummy_result": "dummy result"}}';
-				ws.send( response );
-			}
+		console.log (evt.data);
+		json = $.parseJSON(evt.data);
+		if( json.message_type === 'query' ) {
+			// in theory do something useful, for now just send some stuff, like the number 42
+			response = '{"message_type":"result", "data": {"fragment": "xyz123", "dummy_result": "dummy result"}}';
+			ws.send( response );
 		}
 		else {
 			console.log("error")
