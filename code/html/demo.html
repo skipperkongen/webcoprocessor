@@ -18,19 +18,32 @@ $(function() {
 	};
 
 	ws.onmessage = function (evt) {
-		console.log (evt.data);
+
 		json = $.parseJSON(evt.data);
-		if( json.message_type === 'query' ) {
-			// in theory do something useful, for now just send some stuff, like the number 42
-			response = '{"message_type":"result", "data": {"fragment": "xyz123", "dummy_result": "dummy result"}}';
-			ws.send( response );
-		}
-		else {
-			console.log("error")
-		}
+		console.log ("[Core] Recieving: " + JSON.stringify(json));
+		$("div#incoming_subtasks").append('<div style="margin-bottom: 5px; background-color: black; color: white">eval(' + json.javascript + ')</div>');
+		// in theory do something useful, for now just send some stuff, like the number 42
+		response = JSON.stringify({'query_id':json.query_id, 'subtask_id':json.subtask_id, 'result':eval(json.javascript)});
+		console.log("[Core] Sending: " + response);
+		ws.send( response );
 		
-		$("div#incoming").append('<div style="margin-bottom: 5px; background-color: black; color: white">' + evt.data + '</div>');
+
 	};
+	
+	var ws2 = new WebSocket("ws://localhost:8888/queryclients/attach");
+	
+	ws2.onmessage = function (evt) {
+		json = $.parseJSON(evt.data)
+		console.log ("[Client] Receiving: " + JSON.stringify(json));
+		$("div#incoming_result").append('<div style="margin-bottom: 5px; background-color: black; color: white">' + evt.data + '</div>');
+	};
+	
+	$("input#query").focus();
+	$("button#run_query").click(function() {
+		query = $("input#query").val();
+		console.log('[Client] Sending: ' + query);
+		ws2.send(query);
+	});
 
 })
 
@@ -46,10 +59,15 @@ $(function() {
 {% end %}
 
 {% block content %}
-	<p>Incoming messages:</p>
-	<div id="incoming" />
+	<h2>Enter query:</h2>
+	<input id="query"></input><br/>
+	<button id="run_query">Run query</button>
+
+	<h3>Query results</h3>
+	<div id="incoming_results" />
 {% end %}
 
 {% block more %}
-	<p>github.com/skipperkongen/phd_webcoprocessor</p>
+	<h4>Incoming messages:</h4>
+	<div id="incoming_subtasks" />
 {% end %}

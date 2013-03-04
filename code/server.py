@@ -12,13 +12,14 @@ import tornado.websocket
 from engine import WebCoProcessor, QueryEngine
 from util import Object
 
+Subresult = Object
 
 lock_register = Lock()
 
 class DemoHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.render("demo.html")
-
+		
 class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
 	"""
 	TODO: Write what this is
@@ -29,29 +30,24 @@ class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
 	def initialize(self, webcoprocessor):
 		self.webcoprocessor = webcoprocessor
 		self.connect_time = datetime.now()
-	
-	def write_message_json(self, obj):
-		self.write_message( json_dumps(obj.__dict__) )
-	
+		
 	def open(self):
 		self.webcoprocessor.add_core( self )
-		print "webcore joining. num_cores:", self.webcoprocessor.num_cores()
+		print "webcore joining. num_cores:", self.webcoprocessor.stats.num_cores
 				
 	def on_message(self, text):
 		"""Received a message from a web core"""
-		message = Message.parse_json( text )
-		
-		print  message
-
 		try:
-			obj = Message(subtask_id=message.data['subtask_id'], result=message.data['result'])
-			self.webcoprocessor.output_buffer.put( obj )
+			print  "Recieved from webcore:", text
+			subresult = Subresult.parse_json( text )
+			self.webcoprocessor.output_buffer.put( subresult )
 		except AttributeError:
-			print "query object is missing 'subtask_id' or 'result' attribute"			
+			print "query object is missing 'subtask_id' or 'result' attribute"		
+			raise	
 
 	def on_close(self):
 		self.webcoprocessor.remove_core( self )
-		print "webcore leaving. num_cores:", self.webcoprocessor.num_cores(), "; avg_core_life (sec):", self.webcoprocessor.avg_core_life 
+		print "webcore leaving. num_cores:", self.webcoprocessor.stats.num_cores, "; avg_core_life (sec):", self.webcoprocessor.stats.avg_core_life 
 
 class QueryEngineHandler(tornado.websocket.WebSocketHandler):
 	"""
@@ -61,33 +57,17 @@ class QueryEngineHandler(tornado.websocket.WebSocketHandler):
 	def allow_draft76(self):
 		return True
 	
-	def initialize(self, query_engine):
-		self.query_engine = query_engine
-		
-	def open(self):
-		self.query_engine.add_client( self )
-		
-	def on_message(self, text):
-		
-		message = Message.parse_json( text )
-		
-		print message
-		
+	def initialize(self, queryengine):
+		self.queryengine = queryengine
+
+	def on_message(self, query):		
+		print query
 		try:
-		    self.query_engine.process_query( message.query )
+			client_websocket = self
+			self.queryengine.process_query( 'default', query, client_websocket )
 		except AttributeError:
-		    print "query object is missing 'query' attribute"
-
-	def on_close(self):
-		self.query_engine.remove_client( self )
-
-class Message(Object):
-	"""Based on anonymous object"""
-	
-	@staticmethod
-	def parse_json( message ):
-		return Message( **json_loads(message) )
-
+			print "query object is missing 'query' attribute"
+			raise
 
 if __name__ == "__main__":
 	
@@ -101,12 +81,12 @@ if __name__ == "__main__":
 	proc2query = Queue()
 	
 	webcoprocessor = WebCoProcessor( input_buffer=query2proc, output_buffer=proc2query ) # The web co-processor (WCP)
-	queryengine = QueryEngine( input_buffer=proc2query, output_buffer=query2proc ) # query engine executes queries on WCP
+	queryengine = QueryEngine( input_buffer=proc2query, output_buffer=query2proc, wcp_stats=webcoprocessor.stats ) # query engine executes queries on WCP
 	
 	application = tornado.web.Application([
 		(r"/demo", DemoHandler),
 		(r'/webcoprocessor/attach', WebCoProcessorHandler, dict(webcoprocessor=webcoprocessor)),
-		(r'/queryengine/attach', QueryEngineHandler, dict(queryengine=queryengine))
+		(r'/queryclients/attach', QueryEngineHandler, dict(queryengine=queryengine))
 	],**settings)
 
 	application.listen(8888)
