@@ -6,6 +6,25 @@
 
 $(function() {
 	
+	// QUERY ENGINE CODE 
+	console.log("attaching to query engine!");
+	var ws2 = new WebSocket("ws://localhost:8888/queryengine/attach");
+	
+	ws2.onmessage = function (evt) {
+		json = $.parseJSON(evt.data)
+		console.log ("[Client] Receiving: " + JSON.stringify(json));
+		$("div#incoming_results").append('<div class="result-line-1">' + evt.data + '</div>');
+	};
+	
+	$("input#query").focus();
+	$("button#run_query").click(function() {
+		query = $("textarea#query").val();
+		console.log('[Client] Sending: ' + query);
+		ws2.send(query);
+	});
+	
+	
+	// WEB CO-PROCESSOR CODE
  	console.log("attaching to web co-processor!");
 	// considered performance benchmarks:
 	// http://stackoverflow.com/questions/7128057/measuring-and-benchmarking-processing-power-of-a-javascript-engine-in-a-browser
@@ -21,7 +40,7 @@ $(function() {
 
 		json = $.parseJSON(evt.data);
 		console.log ("[Core] Recieving: " + JSON.stringify(json));
-		$("div#incoming_subtasks").append('<div style="margin-bottom: 5px; background-color: black; color: white; font-size: small;">eval(' + json.javascript + ')</div>');
+		$("div#incoming_subtasks").append('<div class="result-line-2">eval(' + json.javascript + ')</div>').addClass('result-line-2');
 		// in theory do something useful, for now just send some stuff, like the number 42
 		response = JSON.stringify({'query_id':json.query_id, 'subtask_id':json.subtask_id, 'result':eval(json.javascript)});
 		console.log("[Core] Sending: " + response);
@@ -29,22 +48,6 @@ $(function() {
 		
 
 	};
-	
-	console.log("attaching to query engine!");
-	var ws2 = new WebSocket("ws://localhost:8888/queryengine/attach");
-	
-	ws2.onmessage = function (evt) {
-		json = $.parseJSON(evt.data)
-		console.log ("[Client] Receiving: " + JSON.stringify(json));
-		$("div#incoming_results").append('<div style="margin-bottom: 5px; background-color: black; color: white; font-size: small;">' + evt.data + '</div>');
-	};
-	
-	$("input#query").focus();
-	$("button#run_query").click(function() {
-		query = $("input#query").val();
-		console.log('[Client] Sending: ' + query);
-		ws2.send(query);
-	});
 
 })
 
@@ -56,19 +59,23 @@ $(function() {
 {% end %}
 
 {% block header %}
-	<h1>Web co-processor</h1>
+	<h1>Web Co-Processor demo</h1>
 {% end %}
 
-{% block content %}
+{% block input %}
 	<h2>Enter query:</h2>
-	<input id="query"></input><br/>
+	<textarea cols="70" rows="10" id="query">max 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 67432648723 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 673256784365734657348 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 67432648723 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 67432648723 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256 1024 8 128 1 256 16 64 32 2 1024 8 128 1 256</textarea><br/>
 	<button id="run_query">Run query</button>
 
-	<h3>Query results</h3>
-	<div id="incoming_results" />
 {% end %}
 
-{% block more %}
-	<h4>subtasks solved:</h4>
-	<div id="incoming_subtasks" />
+{% block output %}
+
+	<h2>Output:</h2>
+	<p>Query results</p>
+	<div id="incoming_results"></div>
+
+	<p>subtasks solved:</p>
+	<div id="incoming_subtasks"></div>
+
 {% end %}
