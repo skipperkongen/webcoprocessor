@@ -30,12 +30,13 @@ $(function() {
 
 	};
 	
-	var ws2 = new WebSocket("ws://localhost:8888/queryclients/attach");
+	console.log("attaching to query engine!");
+	var ws2 = new WebSocket("ws://localhost:8888/queryengine/attach");
 	
 	ws2.onmessage = function (evt) {
 		json = $.parseJSON(evt.data)
 		console.log ("[Client] Receiving: " + JSON.stringify(json));
-		$("div#incoming_result").append('<div style="margin-bottom: 5px; background-color: black; color: white">' + evt.data + '</div>');
+		$("div#incoming_results").append('<div style="margin-bottom: 5px; background-color: black; color: white">' + evt.data + '</div>');
 	};
 	
 	$("input#query").focus();

@@ -40,7 +40,7 @@ class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
 		try:
 			print  "Recieved from webcore:", text
 			subresult = Subresult.parse_json( text )
-			self.webcoprocessor.output_buffer.put( subresult )
+			self.webcoprocessor.queryengine.process_subresult( subresult )
 		except AttributeError:
 			print "query object is missing 'subtask_id' or 'result' attribute"		
 			raise	
@@ -77,16 +77,16 @@ if __name__ == "__main__":
 	}
 	
 	# TODO, add persistence via leveldb or tightdb
-	query2proc = Queue()
-	proc2query = Queue()
+	io_buffer = Queue()
 	
-	webcoprocessor = WebCoProcessor( input_buffer=query2proc, output_buffer=proc2query ) # The web co-processor (WCP)
-	queryengine = QueryEngine( input_buffer=proc2query, output_buffer=query2proc, wcp_stats=webcoprocessor.stats ) # query engine executes queries on WCP
+	webcoprocessor = WebCoProcessor( io_buffer ) # The web co-processor (WCP)
+	queryengine = QueryEngine( webcoprocessor ) # query engine executes queries on WCP
+	webcoprocessor.queryengine = queryengine
 	
 	application = tornado.web.Application([
 		(r"/demo", DemoHandler),
 		(r'/webcoprocessor/attach', WebCoProcessorHandler, dict(webcoprocessor=webcoprocessor)),
-		(r'/queryclients/attach', QueryEngineHandler, dict(queryengine=queryengine))
+		(r'/queryengine/attach', QueryEngineHandler, dict(queryengine=queryengine))
 	],**settings)
 
 	application.listen(8888)
