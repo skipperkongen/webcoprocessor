@@ -21,11 +21,7 @@ class DemoHandler(tornado.web.RequestHandler):
 
 class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
 	"""
-	- http://www.tornadoweb.org/documentation/websocket.html (this is the one to use)
-	
-	The Web Sockets API enables web browsers to maintain a bi-directional 
-	communication channel to a server, which in turn makes implementing 
-	real-time web sites about 1000% easier than it is today.
+	TODO: Write what this is
 	"""
 	def allow_draft76(self):
 		return True
@@ -38,51 +34,59 @@ class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
 		self.write_message( json_dumps(obj.__dict__) )
 	
 	def open(self):
-		# pdb.set_trace() # let's see what info we have
 		self.webcoprocessor.add_core( self )
 		print "webcore joining. num_cores:", self.webcoprocessor.num_cores()
 				
-	def on_message(self, message):
+	def on_message(self, text):
 		"""Received a message from a web core"""
-		msg_from_core = WCPMessage.parse_message(message)
+		message = Message.parse_json( text )
 		
-		print msg_from_core.message_type, msg_from_core.data
+		print  message
 
-		#if msg_from_core.message_type == 'init':
-			# web core saying hi!
-		#	pass
-
-		if msg_from_core.message_type == 'result':
-			# web core has computed a JSON result
-			self.webcoprocessor.output_buffer.put( msg_from_core.data )
-
-		# no need to answer web cores back, but this is how you'd do it:
-		# - self.write_message( json_dumps(obj.__dict__)  )
+		try:
+			obj = Message(subtask_id=message.data['subtask_id'], result=message.data['result'])
+			self.webcoprocessor.output_buffer.put( obj )
+		except AttributeError:
+			print "query object is missing 'subtask_id' or 'result' attribute"			
 
 	def on_close(self):
 		self.webcoprocessor.remove_core( self )
 		print "webcore leaving. num_cores:", self.webcoprocessor.num_cores(), "; avg_core_life (sec):", self.webcoprocessor.avg_core_life 
 
 class QueryEngineHandler(tornado.websocket.WebSocketHandler):
+	"""
+	TODO: Write what this is
+	"""
 	
-	def initialize(self, queryengine):
-		self.queryengine = queryengine
+	def allow_draft76(self):
+		return True
+	
+	def initialize(self, query_engine):
+		self.query_engine = query_engine
 		
 	def open(self):
-		pass
+		self.query_engine.add_client( self )
 		
-	def on_message(self, message):
-		pass	
+	def on_message(self, text):
+		
+		message = Message.parse_json( text )
+		
+		print message
+		
+		try:
+		    self.query_engine.process_query( message.query )
+		except AttributeError:
+		    print "query object is missing 'query' attribute"
 
 	def on_close(self):
-		pass
+		self.query_engine.remove_client( self )
 
-class WCPMessage(Object):
+class Message(Object):
 	"""Based on anonymous object"""
 	
 	@staticmethod
-	def parse_message( message ):
-		return WCPMessage( **json_loads(message) )
+	def parse_json( message ):
+		return Message( **json_loads(message) )
 
 
 if __name__ == "__main__":
