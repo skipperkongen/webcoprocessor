@@ -21,7 +21,7 @@ $(function() {
 
 		json = $.parseJSON(evt.data);
 		console.log ("[Core] Recieving: " + JSON.stringify(json));
-		$("div#incoming_subtasks").append('<div style="margin-bottom: 5px; background-color: black; color: white">eval(' + json.javascript + ')</div>');
+		$("div#incoming_subtasks").append('<div style="margin-bottom: 5px; background-color: black; color: white; font-size: small;">eval(' + json.javascript + ')</div>');
 		// in theory do something useful, for now just send some stuff, like the number 42
 		response = JSON.stringify({'query_id':json.query_id, 'subtask_id':json.subtask_id, 'result':eval(json.javascript)});
 		console.log("[Core] Sending: " + response);
@@ -36,7 +36,7 @@ $(function() {
 	ws2.onmessage = function (evt) {
 		json = $.parseJSON(evt.data)
 		console.log ("[Client] Receiving: " + JSON.stringify(json));
-		$("div#incoming_results").append('<div style="margin-bottom: 5px; background-color: black; color: white">' + evt.data + '</div>');
+		$("div#incoming_results").append('<div style="margin-bottom: 5px; background-color: black; color: white; font-size: small;">' + evt.data + '</div>');
 	};
 	
 	$("input#query").focus();
@@ -69,6 +69,6 @@ $(function() {
 {% end %}
 
 {% block more %}
-	<h4>Incoming messages:</h4>
+	<h4>subtasks solved:</h4>
 	<div id="incoming_subtasks" />
 {% end %}
