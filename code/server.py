@@ -97,8 +97,11 @@ if __name__ == "__main__":
 	}
 	
 	# TODO, add persistence via leveldb or tightdb
-	webcoprocessor = WebCoProcessor( input_buffer=Queue(), output_buffer=Queue() ) # The web co-processor (WCP)
-	queryengine = QueryEngine( webcoprocessor ) # query engine executes queries on WCP
+	query2proc = Queue()
+	proc2query = Queue()
+	
+	webcoprocessor = WebCoProcessor( input_buffer=query2proc, output_buffer=proc2query ) # The web co-processor (WCP)
+	queryengine = QueryEngine( input_buffer=proc2query, output_buffer=query2proc ) # query engine executes queries on WCP
 	
 	application = tornado.web.Application([
 		(r"/demo", DemoHandler),
