@@ -89,5 +89,8 @@ if __name__ == "__main__":
 		(r'/queryengine/attach', QueryEngineHandler, dict(queryengine=queryengine))
 	],**settings)
 
+	print "Starting web co-processor"
+	print "Starting query engine"
+	print "Ready to accept web cores and clients"
 	application.listen(8888)
 	tornado.ioloop.IOLoop.instance().start()
