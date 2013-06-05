@@ -9,6 +9,8 @@
 
 If you are thinking *botnet*, you are forgiven. The idea is similar, but the intent different.
 
+<img src="https://docs.google.com/drawings/d/1rBgKMcpj4UwuuJfBXKrpSWS0QkbhT2eZXmXOJtrkG8E/pub?w=749&amp;h=483">
+
 ## Demo
 
 The is a small demo of the web co-processor idea in the [code](./code) directory. To try the demo, do the following:
