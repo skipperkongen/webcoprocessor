@@ -3,7 +3,7 @@
 ## What is the basic idea?
 
 1. A person opens a webpage in his browser
-2. The webpage has a small javascript code that connects the browser (two-way connection) a websocket on the server
+2. The webpage has a small javascript code that connects the browser (two-way connection) to a websocket on the server
 3. The persons browser is now a *core* in the web co-processor. It can execute javascript on behalf of the server, and store transient data.
 
 ## Demo
