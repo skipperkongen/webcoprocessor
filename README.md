@@ -4,7 +4,7 @@
 
 1. A person opens a webpage in his browser
 2. The webpage has a small javascript code that opens a two-way connection between the browser and server via a websocket
-3. The persons browser is now a *core* in the web co-processor. A "core" = transient CPU (executes Javascript) and storage (Web Storage).
+3. The persons browser is now a *core* in the web co-processor. A "core" = transient CPU ([executes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) Javascript) and storage ([Web Storage](http://en.wikipedia.org/wiki/Web_storage)).
 4. A core can execute javascript on behalf of other web cores (or the server), and store transient data.
 
 If you are thinking *botnet*, you are forgiven. The idea is similar, but the intent different.
