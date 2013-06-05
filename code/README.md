@@ -1,6 +1,6 @@
 # Try the demo
 
-The is a small demo of the web co-processor idea in the [code](./code) directory. To try the demo, do the following:
+To try the demo, do the following:
 
 ```bash
 cd code # this directory
