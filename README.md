@@ -1,6 +1,20 @@
 # The Web Co-processor
 
-The idea is the following. Every person viewing a webpage (containing a small piece of javascript code) becomes a core in the web co-processor. If 1000 people are viewing the page, there are 1000 cores. The technology is based on websockets between the client and server, and a server side code that parallelizes a tasks received from one core, and send the subtasks to all the other cores.
+## What is the basic idea?
 
-The idea is that any of the connected people can use the combined computing power of all the other people who are connected to collectively solve some problem. Good tasks are computationally expensive, but only need small amounts of data, and the ability to prove answers correct. The archetypical task is bruteforcing cryptographic hashes.
+1. A person opens a webpage in his browser
+2. The webpage has a small javascript code that connects the browser (two-way connection) a websocket on the server
+3. The persons browser is now a *core* in the web co-processor. It can execute javascript on behalf of the server, and store transient data.
+
+## Demo
+
+The is a small demo of the web co-processor idea in the [code](./code) directory. To try the demo, do the following:
+
+```bash
+cd code
+python server.py
+# this starts the coordination server
+```
+
+Open the location [localhost:8888/demo](http://localhost:8888/demo) in a few browser tabs. Click the 'run query' button, and see how the tasks gets distributed to all the browsers (that *eval* some Javascript and send the result back to the browser tab that started the query).
 
