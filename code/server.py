@@ -21,6 +21,7 @@ class DemoHandler(tornado.web.RequestHandler):
 		self.render("demo.html")
 		
 class WebCoProcessorHandler(tornado.websocket.WebSocketHandler):
+
 	"""
 	TODO: Write what this is
 	"""
