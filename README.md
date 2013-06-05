@@ -7,6 +7,8 @@
 3. The persons browser is now a *core* in the web co-processor
 4. A core can execute javascript on behalf of other web cores (or the server), and store transient data.
 
+If you are thinking *botnet*, you are forgiven. The idea is similar, but the intent different.
+
 ## Demo
 
 The is a small demo of the web co-processor idea in the [code](./code) directory. To try the demo, do the following:
