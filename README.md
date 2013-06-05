@@ -1,4 +1,4 @@
-# The Web Co-processor
+# The Web Co-processor*
 
 ## What is the basic idea?
 
@@ -22,4 +22,6 @@ python server.py
 ```
 
 Open the location [localhost:8888/demo](http://localhost:8888/demo) in a few browser tabs. Click the 'run query' button, and see how the tasks gets distributed to all the browsers (that *eval* some Javascript and send the result back to the browser tab that started the query).
+
+*) Credit for name Web Co-Processor goes to Marcos Vaz Salles. Idea behind Web Co-Processor is due to Pimin Konstantin Kefaloukos.
 
